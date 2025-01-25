@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const ScenarioCard = ({ scenario, onDelete }) => {
   const navigate = useNavigate();
-  const { auth } = useAuth(); // Kullanıcının rolü için AuthContext
+  const { auth } = useAuth();
   const [writerName, setWriterName] = useState('Loading...');
   const [wrestlerNicknames, setWrestlerNicknames] = useState([]);
   const [loadingAssignments, setLoadingAssignments] = useState(true);
@@ -14,7 +14,6 @@ const ScenarioCard = ({ scenario, onDelete }) => {
   useEffect(() => {
     const fetchWriterAndWrestlers = async () => {
       try {
-        // Eğer assignments varsa, writer ve wrestler bilgilerini getir
         if (scenario.assignments.length > 0) {
           const writerId = scenario.assignments[0]?.WriterId;
           if (writerId) {
@@ -45,59 +44,66 @@ const ScenarioCard = ({ scenario, onDelete }) => {
     fetchWriterAndWrestlers();
   }, [scenario.assignments]);
 
-  // Kullanıcı rolü kontrolü
   const isBrandManager =
     auth?.user?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] === 'Brand Manager';
 
   return (
-    <div className="p-4 bg-gray-800 rounded-lg shadow-md space-y-4 hover:shadow-lg transition-shadow duration-300">
-      {/* Scenario Information */}
-      <div>
-        <h2 className="text-xl font-bold">{scenario.Title}</h2>
-        <p className="text-gray-400">{scenario.Content}</p>
-        <p>
-          <strong>Approved:</strong> {scenario.IsApproved ? 'Yes' : 'No'}
+    <div className="p-6 bg-gray-700 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 space-y-6">
+      {/* Scenario Header */}
+      <div className="border-b border-gray-600 pb-4">
+        <h2 className="text-2xl font-semibold text-white">{scenario.Title}</h2>
+        <p className="text-sm text-gray-300">{scenario.Content}</p>
+      </div>
+
+      {/* Scenario Details */}
+      <div className="space-y-2">
+        <p className="text-sm text-gray-200">
+          <strong>Approved:</strong>{' '}
+          <span className={scenario.IsApproved ? 'text-green-400' : 'text-red-400'}>
+            {scenario.IsApproved ? 'Yes' : 'No'}
+          </span>
         </p>
-        <p>
+        <p className="text-sm text-gray-200">
           <strong>Created At:</strong> {scenario.FormattedCreatedAt}
         </p>
       </div>
 
       {/* Assignments */}
       <div>
-        <h3 className="text-lg font-bold">Assignments</h3>
+        <h3 className="text-lg font-semibold text-gray-200 mb-2">Assignments</h3>
         {loadingAssignments ? (
-          <p className="text-gray-400">Loading assignments...</p>
+          <p className="text-sm text-gray-400">Loading assignments...</p>
         ) : (
-          <>
-            <p>
+          <div>
+            <p className="text-sm text-gray-200">
               <strong>Writer:</strong> {writerName}
             </p>
-            <ul className="space-y-2">
+            <ul className="mt-2 space-y-1">
               {wrestlerNicknames.map((nickname, index) => (
-                <li key={index}>
-                  <p>
-                    <strong>Wrestler:</strong> {nickname}
-                  </p>
+                <li
+                  key={index}
+                  className="text-sm text-gray-900 bg-gray-300 px-3 py-2 rounded shadow-md"
+                >
+                  <strong>Wrestler:</strong> {nickname}
                 </li>
               ))}
             </ul>
-          </>
+          </div>
         )}
       </div>
 
-      {/* Actions */}
+      {/* Action Buttons */}
       {isBrandManager && (
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end space-x-4 mt-4">
           <button
             onClick={() => navigate(`/scenario/edit/${scenario.Id}`)}
-            className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600"
+            className="px-4 py-2 bg-yellow-500 text-black rounded-lg shadow hover:bg-yellow-600 transition-colors"
           >
             Edit
           </button>
           <button
             onClick={() => onDelete(scenario.Id)}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition-colors"
           >
             Delete
           </button>

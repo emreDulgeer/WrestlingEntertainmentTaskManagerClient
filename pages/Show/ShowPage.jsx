@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getShows } from '../../services/Show/showService';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Auth context'i ekledik
+import { useAuth } from '../../context/AuthContext'; 
 
 const ShowPage = () => {
   const [shows, setShows] = useState([]);
@@ -13,7 +13,7 @@ const ShowPage = () => {
     orderByDescending: true,
   });
   const navigate = useNavigate();
-  const { auth } = useAuth(); // Kullanıcının auth bilgilerini alıyoruz
+  const { auth } = useAuth(); 
 
   useEffect(() => {
     const fetchShows = async () => {
@@ -38,7 +38,7 @@ const ShowPage = () => {
   };
 
   const handleCreateShow = () => {
-    navigate('/show/create'); // Create Show sayfasına yönlendirme
+    navigate('/show/create'); 
   };
 
   if (loading) {
@@ -49,14 +49,14 @@ const ShowPage = () => {
     return <p className="text-red-500">{error}</p>;
   }
 
-  // Kullanıcının rolünü kontrol et
+
   const userRole = auth?.user?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Shows</h1>
-        {/* Rol kontrolü: Butonu sadece General Manager görebilir */}
+        
         {userRole === 'General Manager' && (
           <button
             onClick={handleCreateShow}
@@ -67,7 +67,7 @@ const ShowPage = () => {
         )}
       </div>
 
-      {/* Filtreleme Alanı */}
+      
       <div className="mb-6 p-4 border rounded bg-gray-100 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <select
@@ -102,12 +102,12 @@ const ShowPage = () => {
         </div>
       </div>
 
-      {/* Show Listesi */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {shows.map((show) => (
           <div
             key={show.Id}
-            onClick={() => navigate(`/show/${show.Id}`)} // Tıklanınca detay sayfasına yönlendir
+            onClick={() => navigate(`/show/${show.Id}`)} 
             className={`p-4 rounded-lg shadow-lg cursor-pointer transition-transform transform hover:scale-105 ${
               show.Brand === 'Raw'
                 ? 'bg-red-500 text-white'

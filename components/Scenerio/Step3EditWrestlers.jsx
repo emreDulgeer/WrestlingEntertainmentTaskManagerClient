@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getWrestlers } from '../../services/Wrestler/wrestlerService';
 
-const Step3EditWrestlers = ({
-  selectedWrestlers,
-  setSelectedWrestlers,
-  nextStep,
-  prevStep,
-  auth,
-  originalAssignments,
-}) => {
+const Step3EditWrestlers = ({ originalAssignments, selectedWrestlers, setSelectedWrestlers, nextStep, prevStep, auth }) => {
   const [wrestlers, setWrestlers] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalWrestlers, setTotalWrestlers] = useState(0);
@@ -17,20 +10,19 @@ const Step3EditWrestlers = ({
     const fetchWrestlers = async () => {
       try {
         const { wrestlers, total } = await getWrestlers({
-          brand: auth.user.Brand, // Kullanıcı Brand'e göre filtreleme
+          brand: auth.user.Brand,
           pageNumber,
           pageSize: 24,
         });
-
         setWrestlers(wrestlers);
         setTotalWrestlers(total);
 
-        // Varsayılan olarak originalAssignments içindeki Wrestler'ları seçili yap
-        const wrestlerIdsFromAssignments = originalAssignments.map((assignment) => assignment.WrestlerId);
-        setSelectedWrestlers((prev) => [
-          ...prev,
-          ...wrestlers.filter((wrestler) => wrestlerIdsFromAssignments.includes(wrestler.Id)),
-        ]);
+        if (originalAssignments && Array.isArray(originalAssignments)) {
+          const defaultWrestlers = wrestlers.filter((wrestler) =>
+            originalAssignments.some((assignment) => assignment.WrestlerId === wrestler.Id)
+          );
+          setSelectedWrestlers(defaultWrestlers);
+        }
       } catch (error) {
         console.error('Failed to fetch wrestlers:', error);
       }
@@ -49,20 +41,20 @@ const Step3EditWrestlers = ({
             onClick={() =>
               setSelectedWrestlers((prev) =>
                 prev.some((w) => w.Id === wrestler.Id)
-                  ? prev.filter((w) => w.Id !== wrestler.Id) // Seçimden çıkar
-                  : [...prev, wrestler] // Seçime ekle
+                  ? prev.filter((w) => w.Id !== wrestler.Id)
+                  : [...prev, wrestler]
               )
             }
             className={`p-6 border-2 rounded-lg shadow-lg cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-xl ${
               selectedWrestlers.some((w) => w.Id === wrestler.Id)
-                ? 'border-blue-500 bg-blue-100'
-                : 'border-gray-700 bg-gray-800'
+                ? 'bg-green-500 text-white'
+                : 'bg-gray-800 text-gray-200'
             }`}
           >
-            <h3 className="text-xl font-bold text-gray-200">{wrestler.FullName}</h3>
-            <p className="text-gray-400 text-sm italic">"{wrestler.Nickname}"</p>
-            <p className="text-gray-300">Gender: {wrestler.Gender}</p>
-            <p className="text-gray-300">Brand: {wrestler.Brand}</p>
+            <h3 className="text-xl font-bold">{wrestler.FullName}</h3>
+            <p className="text-sm italic">"{wrestler.Nickname}"</p>
+            <p>Gender: {wrestler.Gender}</p>
+            <p>Brand: {wrestler.Brand}</p>
             <p
               className={`font-bold ${
                 wrestler.HeelOrFace === 'Heel' ? 'text-red-500' : 'text-blue-400'
@@ -73,7 +65,6 @@ const Step3EditWrestlers = ({
           </div>
         ))}
       </div>
-
       <div className="flex justify-between mt-8">
         <button onClick={prevStep} className="bg-gray-600 px-4 py-2 rounded hover:bg-gray-700">
           Back

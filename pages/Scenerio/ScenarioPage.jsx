@@ -3,25 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { getScenarios, deleteScenario } from '../../services/Scenerio/scenarioService';
 import { getScenarioAssignments } from '../../services/ScenerioAssignment/scenarioAssignmentService';
 import ScenarioCard from '../../components/Scenerio/ScenarioCard';
-import { useAuth } from '../../context/AuthContext'; // AuthContext'i içe aktar
+import { useAuth } from '../../context/AuthContext'; 
 
 const ScenarioPage = () => {
   const [scenarios, setScenarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { auth } = useAuth(); // Kullanıcının oturum bilgilerini al
+  const { auth } = useAuth(); 
 
   useEffect(() => {
     const fetchScenarios = async () => {
       try {
         const scenariosData = await getScenarios();
-        console.log('Fetched Scenarios:', scenariosData); // Senaryoları logla
+        console.log('Fetched Scenarios:', scenariosData); 
         const scenariosWithAssignments = await Promise.all(
           scenariosData.map(async (scenario) => {
-            console.log('Processing scenario ID:', scenario.Id); // Her bir senaryoyu logla
-            const assignments = await getScenarioAssignments(scenario.Id); // Doğru fonksiyon çağrısı
-            console.log(`Assignments for Scenario ${scenario.Id}:`, assignments); // Atamaları logla
+            console.log('Processing scenario ID:', scenario.Id); 
+            const assignments = await getScenarioAssignments(scenario.Id); 
+            console.log(`Assignments for Scenario ${scenario.Id}:`, assignments); 
             return { ...scenario, assignments };
           })
         );

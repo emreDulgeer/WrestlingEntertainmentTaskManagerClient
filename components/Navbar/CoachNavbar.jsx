@@ -14,12 +14,6 @@ const CoachNavbar = () => {
         Shows
       </button>
       <button
-        onClick={() => navigate('/wrestlers')}
-        className="text-white hover:underline"
-      >
-        Wrestlers
-      </button>
-      <button
         onClick={() => navigate('/trainings')}
         className="text-white hover:underline"
       >

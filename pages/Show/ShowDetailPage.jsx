@@ -36,7 +36,7 @@ const ShowDetailPage = () => {
       try {
         await deleteShow(id);
         alert('Show deleted successfully!');
-        navigate('/shows'); // Show listesine yönlendirme
+        navigate('/shows'); 
       } catch (err) {
         console.error('Failed to delete show:', err);
         alert('Failed to delete the show.');
@@ -60,7 +60,7 @@ const ShowDetailPage = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   const userRole = auth.user['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-  const userBrand = auth.user.Brand; // Brand bilgisi doğrudan token'dan alınıyor
+  const userBrand = auth.user.Brand; 
 
 
   const canEditOrDelete = userRole === 'General Manager';

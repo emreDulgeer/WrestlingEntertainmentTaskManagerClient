@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getScenarioById, updateScenario } from '../../services/Scenerio/scenarioService';
+import { useAuth } from '../../context/AuthContext';
+import {
+  getScenarioById,
+  updateScenario,
+} from '../../services/Scenerio/scenarioService';
 import {
   getScenarioAssignments,
   deleteScenarioAssignment,
@@ -12,39 +16,37 @@ import Step3EditWrestlers from '../../components/Scenerio/Step3EditWrestlers';
 import Step4EditReview from '../../components/Scenerio/Step4EditReview';
 
 const ScenerioEdit = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Scenerio ID
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-
-  // Scenario ve Assignment Verileri
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [originalScenario, setOriginalScenario] = useState({});
-  const [originalAssignments, setOriginalAssignments] = useState([]);
   const [selectedWriter, setSelectedWriter] = useState(null);
   const [selectedWrestlers, setSelectedWrestlers] = useState([]);
-
-  // Veriyi Getir
+  const [originalScenario, setOriginalScenario] = useState({});
+  const [originalAssignments, setOriginalAssignments] = useState([]);
+  const { auth } = useAuth();
   useEffect(() => {
     const fetchScenarioData = async () => {
       try {
         const scenario = await getScenarioById(id);
         const assignments = await getScenarioAssignments(id);
 
+        
         setTitle(scenario.Title);
         setContent(scenario.Content);
         setOriginalScenario(scenario);
-        setOriginalAssignments(assignments);
 
+        
         if (assignments.length > 0) {
-          // Writer ID
           const writer = assignments[0].Writer;
           setSelectedWriter(writer);
 
-          // Wrestler IDs
-          const wrestlers = assignments.map((a) => a.Wrestler);
+          const wrestlers = assignments.map((assignment) => assignment.Wrestler);
           setSelectedWrestlers(wrestlers);
         }
+
+        setOriginalAssignments(assignments);
       } catch (error) {
         console.error('Failed to fetch scenario data:', error);
       }
@@ -53,20 +55,18 @@ const ScenerioEdit = () => {
     fetchScenarioData();
   }, [id]);
 
-  // Adımların Kontrolü
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  // Submit İşlemi
   const handleSubmit = async () => {
     try {
-      // Scenario Güncelle
+    
       await updateScenario(id, { Title: title, Content: content });
 
-      // Eski Assignment'ları Sil
+      
       await Promise.all(originalAssignments.map((a) => deleteScenarioAssignment(a.Id)));
 
-      // Yeni Assignment'ları Oluştur
+      
       await Promise.all(
         selectedWrestlers.map((wrestler) =>
           createScenarioAssignment({
@@ -102,7 +102,9 @@ const ScenerioEdit = () => {
           setSelectedWriter={setSelectedWriter}
           nextStep={nextStep}
           prevStep={prevStep}
+          originalAssignments={originalAssignments}
         />
+      
       )}
       {step === 3 && (
         <Step3EditWrestlers
@@ -110,6 +112,8 @@ const ScenerioEdit = () => {
           setSelectedWrestlers={setSelectedWrestlers}
           nextStep={nextStep}
           prevStep={prevStep}
+          originalAssignments={originalAssignments}
+          auth={auth}
         />
       )}
       {step === 4 && (

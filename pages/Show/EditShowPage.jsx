@@ -33,14 +33,14 @@ const EditShowPage = () => {
         const data = await getShowById(id);
         console.log('Fetched Show Data:', data);
 
-        // Tarih formatını düzenliyoruz: YYYY-MM-DDTHH:mm
+        
         const formattedDate = data.Date
           ? new Date(data.Date).toISOString().slice(0, 16)
           : '';
 
         setFormData({
           ...data,
-          Date: formattedDate, // Formatlanmış tarihi formData'ya ekle
+          Date: formattedDate, 
         });
       } catch (err) {
         setError('Failed to load show details.');

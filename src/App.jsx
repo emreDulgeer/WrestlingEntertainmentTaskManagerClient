@@ -32,6 +32,8 @@ import ScenerioEdit from '../pages/Scenerio/ScenerioEdit';
 import WrestlerLayout from '../layouts/WrestlerLayout';
 import CoachLayout from '../layouts/CoachLayout';
 import WriterLayout from '../layouts/WriterLayout';
+import HealthPerformancePage from '../pages/HealthPerformance/HealthPerformancePage';
+import CreateHealthPerformancePage from '../pages/HealthPerformance/CreateHealthPerformancePage';
 const App = () => {
   return (
     <AuthProvider>
@@ -197,7 +199,21 @@ const App = () => {
               <ProtectedRoute role="Brand Manager">
                 <ScenerioEdit />
               </ProtectedRoute>
-            }/>     
+            }/> 
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute role={['Brand Manager',"Writer","Wrestler","Coach","General Manager"]}>
+                  <HealthPerformancePage />
+                </ProtectedRoute>
+              }/>
+              <Route
+              path="/reports/create"
+              element={
+                <ProtectedRoute role="Coach">
+                  <CreateHealthPerformancePage />
+                </ProtectedRoute>
+              }/>    
           </Route>
 
           {/* General Manager Sayfaları */}

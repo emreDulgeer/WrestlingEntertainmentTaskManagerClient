@@ -13,19 +13,10 @@ const WriterDashboard = () => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        
-        const userBrand = auth?.user?.Brand;
+        console.log('Fetching all shows...');
 
-        if (!userBrand) {
-          setError('Brand bilgisi bulunamadı.');
-          setLoading(false);
-          return;
-        }
-
-        console.log('Fetching shows for brand:', userBrand);
-
-        
-        const data = await getShows({ brand: userBrand, orderByDescending: true });
+        // API'den tüm show'ları çekiyoruz
+        const data = await getShows({ orderByDescending: true });
         setShows(data);
       } catch (err) {
         setError('Failed to load shows. Please try again later.');
@@ -36,7 +27,7 @@ const WriterDashboard = () => {
     };
 
     fetchShows();
-  }, [auth]);
+  }, []);
 
   const handleShowClick = (showId) => {
     navigate(`/show/${showId}`);
